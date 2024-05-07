@@ -1,7 +1,0 @@
-numpy
-autograd
-pandas
-matplotlib
-seaborn
-scipy
-pytorch

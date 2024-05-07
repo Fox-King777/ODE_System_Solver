@@ -3,19 +3,14 @@ Functions for visualizing loss during training.
 """
 
 # pylint: disable=E1101, C0200
-from typing import List
 from matplotlib import pyplot as plt
 import seaborn as sns
 import autograd.numpy as np
-from neural_network import NeuralNetwork
-from loss_function import mse_loss_function
 
 
 def print_loss(
-    t: np.array,
-    neural_networks: List[NeuralNetwork],
-    weights_list: List[List[np.array]],
     iteration: int,
+    loss: float,
     prev_loss: float,
 ):
     """Prints the iteration number and loss of the neural networks.
@@ -24,11 +19,12 @@ def print_loss(
         t: The input vector
         neural_networks: A list of neural networks
         weights_list: The weights and biases of the neural networks
+        iteration: The current iteration
+        prev_loss: The loss of of the previous iteration
 
     Returns:
         loss: The loss of the neural networks
     """
-    loss = mse_loss_function(t, neural_networks, weights_list)
     print("\033[0m", end="")
     print("Iteration: ", iteration)
     if loss < prev_loss:
@@ -52,5 +48,7 @@ def plot_loss(num_iter, loss):
     fig = plt.figure(figsize=(20, 5))
     ax = fig.add_subplot()
     sns.set_theme(style="darkgrid", palette="muted", font="DeJavu Serif")
-    ax.plot(np.arange(0, num_iter), loss, lw=1)
+    ax.plot(np.arange(0, num_iter), loss[:num_iter], lw=1)
+    plt.xlabel("Iteration")
+    plt.ylabel("Loss")
     sns.despine()

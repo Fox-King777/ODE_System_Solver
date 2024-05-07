@@ -1,19 +1,16 @@
 """
-Neural Network designed to solve ODEs and syste of ODEs.
+Neural Network designed to solve DEs and syste of DEs.
 
 """
 
 # pylint: disable=E1101, C0200
 from typing import List, Callable
 import autograd.numpy as np
-from autograd import elementwise_grad
 
 
-class ODENeuralNetwork:
-    """A neural network class for solving ODEs. Can be combine with other neural networks to solve system of ODEs.
+class MLPNeuralNetwork:
+    """A general MLP neural network class.
     Attributes:
-        init_condition (float): Initial condition for the target function.
-        derivative (Callable): Function that calculates the target derivative of the neural network.
         input_size (int): Size of the input layer.
         hidden_sizes (np.array): Array of integers representing the sizes of the hidden layers.
         output_size (int): Size of the output layer.
@@ -23,22 +20,15 @@ class ODENeuralNetwork:
     Methods:
         init_weights(): Initializes the weights and biases of the neural network.
         forward(t: np.array, weights: List[np.array]) -> np.array: Makes a forward pass through the neural network.
-        trial_solution(t: np.array, weights: List[np.array]) -> np.ndarray: Calculates the trial solution.
-        elementwise_trial_solution(t: np.array, weights: List[np.array]) -> np.ndarray: Calculates the trial solution elementwise.
-        trial_grad(t: np.array, weights: List[np.array]) -> np.array: Calculates the gradient of the trial solution with respect to t.
     """
 
     def __init__(
         self,
-        init_condition: np.array,
-        derivative: Callable,
         input_size: int,
         hidden_sizes: np.array,
         output_size: int,
         activation_fns: List[Callable],
     ):
-        self.init_condition = init_condition
-        self.derivative = derivative
         self.input_size = input_size
         self.hidden_sizes = hidden_sizes
         self.output_size = output_size
@@ -88,30 +78,3 @@ class ODENeuralNetwork:
             z = np.matmul(weights[i], np.concatenate((np.ones((1, t.size)), a), axis=0))
             a = self.activation_fns[i](z)
         return z
-
-    def trial_solution(self, t: np.array, weights: List[np.array]) -> np.ndarray:
-        """Calculates the trial solution of the system of ODEs.
-
-        Args:
-            t: The input vector
-            weights: The weights and biases of the neural network
-
-        Returns:
-            A NumPy array of the trial solution of the system of ODEs
-            dimension (len(t),)
-        """
-        fp = self.forward(t, weights).reshape(t.size)
-        return self.init_condition + t * fp
-
-    def trial_grad(self, t: np.array, weights: List[np.array]) -> np.array:
-        """Calculates the gradient of the trial solution of the Lorentz System.
-
-        Args:
-            t: The input vector
-            weights: The weights and biases of the neural network
-
-        Returns:
-            A NumPy array of the gradient of the trial solution of the Lorentz System with
-            dimension (len(t),)
-        """
-        return elementwise_grad(self.trial_solution, 0)(t, weights)

@@ -7,7 +7,7 @@ import autograd.numpy as np
 
 
 def sigmoid(z: float) -> float:
-    """The sigmoid function
+    """The sigmoid function.
 
     Args:
         z: input
@@ -19,7 +19,7 @@ def sigmoid(z: float) -> float:
 
 
 def tanh(z: float) -> float:
-    """The tanh function
+    """The tanh function.
 
     Args:
         z: input
@@ -31,7 +31,7 @@ def tanh(z: float) -> float:
 
 
 def arctan(z: float) -> float:
-    """The arctan function
+    """The arctan function.
 
     Args:
         z: input
@@ -43,7 +43,7 @@ def arctan(z: float) -> float:
 
 
 def elu(z: float, alpha=1.0) -> float:
-    """The Exponential Linear Unit function
+    """The Exponential Linear Unit function.
 
     Args:
         z: input

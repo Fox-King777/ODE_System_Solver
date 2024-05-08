@@ -6,13 +6,12 @@ Loss function.
 from typing import List, Callable
 import autograd.numpy as np
 from autograd import elementwise_grad
-from neural_network import MLPNeuralNetwork
 
 
 def mse_loss_function(
     t: np.array,
-    neural_networks: List[MLPNeuralNetwork],
     weights_list: List[List[np.array]],
+    activation_fns: List[Callable],
     trial_solution: Callable,
     derivative: Callable,
 ) -> float:
@@ -20,26 +19,23 @@ def mse_loss_function(
 
     Args:
         t: The input vector
-        neural_networks: A list of neural networks
         weights_list: A list of weights and biases for each neural networks
+        activation_fns: List of activation functions for each layer
+        trial_solution: The trial solution function
+        derivative: The true derivative of the differential equation
 
     Returns:
         Mean squared error value
     """
-    loss = 0
     trial_sol = np.array(
-        [
-            trial_solution(t, neural_networks[i], weights_list[i], i)
-            for i in range(len(neural_networks))
-        ]
-    )
+        trial_solution(t, weights_list, activation_fns)
+    )  # dim(len(weight_list), len(t))
 
-    for i in range(len(neural_networks)):
-        grad_star = derivative(t, trial_sol)
-        nn_grad = trial_grad(t, neural_networks[i], weights_list[i], trial_solution)
-        error = grad_star - nn_grad
-        loss += error**2
-    loss /= loss.size * len(neural_networks)
+    grad_star = derivative(t, trial_sol)
+    nn_grad = trial_grad(t, weights_list, activation_fns, trial_solution)
+
+    error = grad_star - nn_grad
+    loss = error**2 / (error.size * len(weights_list))
     loss = np.sum(loss)
     loss = np.sqrt(loss)
 
@@ -47,16 +43,50 @@ def mse_loss_function(
 
 
 def trial_grad(
-    t: np.array, nn: MLPNeuralNetwork, weights: List[np.array], trial_solution: Callable
-) -> np.array:
+    t: np.array,
+    weights_list: List[List[np.array]],
+    activation_fns: List[Callable],
+    trial_solution: Callable,
+) -> np.ndarray:
     """Calculates the gradient of the trial solution of the Lorentz System.
 
     Args:
-        t: The input vector
-        weights: The weights and biases of the neural network
+        t: input vector
+        weights_list: list of weights and biases for each neural networks
+        activation_fns: List of activation functions for each layer
+        trial_solution: trial solution function
 
     Returns:
         A NumPy array of the gradient of the trial solution
-        dimension (len(t),)
+        dimension (len(weights_list), len(t))
     """
-    return elementwise_grad(trial_solution, 0)(t, nn, weights)
+    return np.array(
+        [
+            elementwise_grad(elementwise_trial_solution, 0)(
+                t, weights_list, activation_fns, trial_solution, i
+            )
+            for i in range(len(weights_list))
+        ]
+    )
+
+
+def elementwise_trial_solution(
+    t: np.array,
+    weights_list: List[List[np.array]],
+    activation_fns: List[Callable],
+    trial_solution: Callable,
+    idx: int,
+) -> np.array:
+    """Calculates one of the outputs of the trial solution given an index.
+
+    Args:
+        t: input vector
+        weights_list: list of weights and biases for each neural networks
+        activation_fns: List of activation functions for each layer
+        trial_solution: trial solution function
+        idx: index
+
+    Returns:
+        Trial solution at the given index
+    """
+    return trial_solution(t, weights_list, activation_fns)[idx]

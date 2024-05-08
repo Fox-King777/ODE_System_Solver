@@ -3,42 +3,39 @@ Tools for plotting training results
 """
 
 # pylint: disable=E1101, C0200
-from typing import List, Callable
 import autograd.numpy as np
 from matplotlib import pyplot as plt
 import seaborn as sns
-from neural_network import MLPNeuralNetwork
 
 
 def plot_ode(
-    neural_network: MLPNeuralNetwork,
-    trial_solution,
-    analytical_solution: Callable,
     t: np.array,
+    res: np.ndarray,
+    an_sol: np.ndarray,
     scatter_trial=False,
     scatter_analytical=False,
 ):
     """Plots the trial solution of the neural network against the analytical solution for ordinary differential equations.
 
     Args:
-        neural_network: the trained neural network
-        analytical_solution: the analytical solution of the DE
         t: input vector
+        res: trial solution of the neural network with dim(1, len(t))
+        an_sol: analytical solution of the ODE
+        scatter_trial: whether to plot the trial solution as a scatter plot
+        scatter_analytical: whether to plot the analytical solution as a scatter plot
 
     Returns:
         None
     """
-    res = trial_solution(t, neural_network, neural_network.weights)
-    an_sol = analytical_solution(t)
 
     sns.set_theme(style="darkgrid", palette="muted", font="DeJavu Serif")
     fig = plt.figure(figsize=(10, 10))
     ax = fig.add_subplot()
 
     if scatter_trial:
-        ax.scatter(t, res, lw=1)
+        ax.scatter(t, res[0], lw=1)
     else:
-        ax.plot(t, res, lw=1)
+        ax.plot(t, res[0], lw=1)
     if scatter_analytical:
         ax.scatter(t, an_sol, lw=1)
     else:
@@ -47,34 +44,26 @@ def plot_ode(
     sns.despine()
     ax.set_xlabel("t")
     ax.set_ylabel(r"$\Psi$")
-    plt.legend(["nn", "analytical"])
+    plt.legend(["NN", "Analytical"])
 
 
 def plot_system_ode(
-    neural_networks: List[MLPNeuralNetwork],
-    trial_solution,
-    analytical_solution: Callable,
-    t: np.array,
+    res: np.ndarray,
+    an_sol: np.ndarray,
     scatter_trial=False,
     scatter_analytical=False,
 ):
     """Plots the trial solution of the neural network against the analytical solution for system of two ordinary differential equations.
 
     Args:
-        neural_network: the trained neural network
-        analytical_solution: the analytical solution of the DE
-        t: input vector
+        res: trial solution of the neural network
+        an_sol: analytical solution of the ODE
+        scatter_trial: whether to plot the trial solution as a scatter plot
+        scatter_analytical: whether to plot the analytical solution as a scatter plot
 
     Returns:
         None
     """
-    res = np.array(
-        [
-            trial_solution(t, neural_networks[i], neural_networks[i].weights, i)
-            for i in range(len(neural_networks))
-        ]
-    )
-    an_sol = analytical_solution(t)
 
     sns.set_theme(style="darkgrid", palette="muted", font="DeJavu Serif")
 
@@ -95,8 +84,8 @@ def plot_system_ode(
         ax.set_ylabel(r"$\Psi_2$")
 
     if len(res) == 3:
-        fig = plt.figure(figsize=(10, 10), projection="3d")
-        ax = fig.add_subplot()
+        fig = plt.figure(figsize=(10, 10))
+        ax = fig.add_subplot(projection="3d")
 
         if scatter_trial:
             ax.scatter(res[0], res[1], res[2], lw=1)
@@ -110,9 +99,10 @@ def plot_system_ode(
         ax.set_xlabel(r"$\Psi_1$")
         ax.set_ylabel(r"$\Psi_2$")
         ax.set_zlabel(r"$\Psi_3$")
+        ax.set_box_aspect(aspect=None, zoom=0.9)
 
     sns.despine()
-    plt.legend(["MLP", "Analytical"])
+    plt.legend(["NN", "Analytical"])
 
 
 def print_error(res: np.ndarray, an_sol: np.ndarray):

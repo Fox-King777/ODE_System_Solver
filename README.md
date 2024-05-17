@@ -1,2 +1,28 @@
-# Senior-Project
-Everything around us, from biology, stocks, physics, or even common life scenarios can be mathematically modeled by differential equations. From exponential growth/decay and simple harmonic motion equation to the Laplace equation, used to describe steady state heat conduction, and Navier-Stokes equation, used to describe fluid turbulent flow, differential equations can range from easy to solve to incredibly difficult. This project with be focused on solving systems of ordinary differential equations(ODEs). Traditional methods used to solve these systems of ODEs such as the Euler method have truncation and round-off errors as well as instability with stiff functions, functions with flat areas, that make it less accurate for higher order equations while methods such as Runge-Kutta, RDK4, is accurate to the fourth power but is 4 times as costly as the Euler method. This is where neural networks come in. Neural networks have an advantage over traditional methods because the non-linearity of these systems do not cause problems as the would for traditional methods, such as the stiff functions discussed above. Additionally, neural networks can handle high dimensionality with ease, which makes it perfect for large amounts of data with multiple interacting variables. Because neural networks are not slowed down by non-linearity and high dimensionality, they can predict systems of ODEs more accurately and faster than traditional methods. Through research and experimentation, I will create a neural network model using Python libraries to predict the Lorentz System, a chaotic system in which switching the initial conditions can drastically change the function.
+# ODE System Solver
+Implements unsupervised learning neural networks to solve ordinary differential equatios or systems of ordinary differential equations.
+Provides tools for plotting results and train loss.
+
+Algorithms can be found in this [paper](https://arxiv.org/pdf/physics/9705023)
+
+## How the algorithm works
+The program is only given the differential equation(s) and the initial/boundary conditions. From there the neural network must learn the solution. We want to make sure that the neural newtork is always able to satisfy the initial/boundary conditions and we do this through a *trial solution*. Instead of having the neural newtork directly output predictions of the solution, we incorporate the neural network into another equation to output the predictions. This equation is the *trial solution*, whose sole purpose is to satisfy initial/boundary conditions.
+
+Here is an example
+
+$\frac{dy}{dx} = \gamma y, y_0 = 10$
+
+To satisfy the initial condition, a possible trial solution can be:
+
+$y_t = y_0 + xN(x)$
+
+where N represents the neural newtwork
+
+Because the neural network is not trained labeled data(as there are no labeled data for this problem), the neural network cannot be trained in by convential supervised learning. Instead of having a static target for which the neural network tries to fit, the neural network generates it's own target at each iteration loop. 
+
+Specifically, the neural network computes two values: the derivative of the trail solution and the target derivative
+
+
+## How it was made
+**Libraries used:** Numpy, Matplotlib, Seaborn, Autograd
+
+## Lesson Learned

@@ -37,15 +37,12 @@ def gradient_descent(
         plot: Whether to plot the loss
 
     Returns:
-        weights_list: A list of weights for each neural network after running gradient descent
+        loss: The loss at each iteration
     """
     loss_grad_function = grad(mse_loss_function, 1)
     loss = [0] * num_iters
     for i in range(num_iters):
-        loss[i] = mse_loss_function(
-            t, weights_list, activation_fns, trial_solution, derivative
-        )
-
+        # print the loss
         if log is True:
             print_loss(i, loss[i], loss[i - 1])
         if loss[i] < threshold:
@@ -59,10 +56,11 @@ def gradient_descent(
             for k in range(len(weights_list[j])):
                 weights_list[j][k] = weights_list[j][k] - learn_rate * loss_grad[j][k]
 
+    # plot the loss
     if plot is True:
         plot_loss(num_iters, loss)
 
-    return weights_list
+    return loss
 
 
 def adam(
@@ -97,7 +95,7 @@ def adam(
         plot: Whether or not to plot loss
 
     Returns:
-        weights_list: A list of weights for each neural network after running Adam
+        loss: The loss at each iteration
     """
     loss_grad_function = grad(mse_loss_function, 1)
     m = [
@@ -117,6 +115,7 @@ def adam(
         loss[i] = mse_loss_function(
             t, weights_list, activation_fns, trial_solution, derivative
         )
+        # print the loss
         if log is True:
             print_loss(i, loss[i], loss[i - 1])
         if loss[i] < threshold:
@@ -139,8 +138,8 @@ def adam(
                 weights_list[j][k] = weights_list[j][k] - step_size * mhat / (
                     np.sqrt(vhat) + eps
                 )
-
+    # plot the loss
     if plot is True:
         plot_loss(num_iters, loss)
 
-    return weights_list
+    return loss

@@ -43,7 +43,6 @@ def plot_ode(
 
     sns.despine()
     ax.set_xlabel("t")
-    ax.set_ylabel(r"$\Psi$")
     plt.legend(["NN", "Analytical"])
 
 
@@ -80,9 +79,6 @@ def plot_system_ode(
         else:
             ax.plot(an_sol[0], an_sol[1], lw=1)
 
-        ax.set_xlabel(r"$\Psi_1$")
-        ax.set_ylabel(r"$\Psi_2$")
-
     if len(res) == 3:
         fig = plt.figure(figsize=(10, 10))
         ax = fig.add_subplot(projection="3d")
@@ -96,9 +92,6 @@ def plot_system_ode(
         else:
             ax.plot(an_sol[0], an_sol[1], an_sol[2], lw=1)
 
-        ax.set_xlabel(r"$\Psi_1$")
-        ax.set_ylabel(r"$\Psi_2$")
-        ax.set_zlabel(r"$\Psi_3$")
         ax.set_box_aspect(aspect=None, zoom=0.9)
 
     sns.despine()

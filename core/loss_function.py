@@ -35,7 +35,7 @@ def mse_loss_function(
     nn_grad = trial_grad(t, weights_list, activation_fns, trial_solution)
 
     error = grad_star - nn_grad
-    loss = error**2 / (error.size * len(weights_list))
+    loss = error**2 / error.size
     loss = np.sum(loss)
     loss = np.sqrt(loss)
 

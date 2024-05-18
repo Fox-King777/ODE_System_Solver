@@ -2,7 +2,7 @@
 Implements unsupervised learning neural networks to solve ordinary differential equatios or systems of ordinary differential equations.
 Provides tools for plotting results and train loss.
 
-Algorithms can be found in this [paper](https://arxiv.org/pdf/physics/9705023)
+Algorithms can be found in this [paper](https://arxiv.org/pdf/physics/9705023).
 
 ## How the algorithm works
 The program is only given the differential equation(s) and the initial/boundary conditions. From there the neural network must learn the solution. We want to make sure that the neural newtork is always able to satisfy the initial/boundary conditions and we do this through a *trial solution*. Instead of having the neural newtork directly output predictions of the solution, we incorporate the neural network into another equation to output the predictions. This equation is the *trial solution*, whose sole purpose is to satisfy initial/boundary conditions.
@@ -39,6 +39,7 @@ The neural network is trained with a bounded range of input with this loss funct
 
 ## How it was made
 **Libraries used:** Numpy, Matplotlib, Seaborn, Autograd
+
 Due to the unorthodox training algorithm, no ML libraries could be utilized. Instead, the core of the algorithm was implemented with Numpy and Autograd libraries. Numpy handled the linear algebra and Autograd handled the math behind automatic differentiation. The core of the algorithm was split into activation functions, loss function, neural network, and optimizers. The activation functions file includes the sigmoid, tanh, arctan, and ELU activation functions. The loss function file includes the RMSE loss as well as the Autograd automatic differentian function needed for the loss calculation. The optimizers file includes implementations of gradient descent as well as Adam, which are used for training the models. In both optimizers, Autograd automatic differentiation is used for backward propagation.
 
 Due to the limitations of the Autograd library, it is only able to differentiate functions with respect to one of the function parameters. This means classes could not be ultilized. As such, the neural network file only includes weight initilization and forward propogation instead of a fully wrapped neural network class. Futhermore, activation functions, weights, and trial solutions are passed into forward propogation, optimizers, and more separately.

@@ -27,7 +27,7 @@ The target derivative is computed by taking the output from the trial solution a
 
 Simply put, the current derivative is the derivative of the current trial solution and the target derivative is the right hand side of the differential equation. With these values the loss becomes:
 
-$RMSD = \sqrt{\frac{\sum^{N} (target_i - cur_i)^2}{N}}$
+$RMSD = \sqrt{\frac{\sum_{i=1}^{N} (target_i - cur_i)^2\}{N}}$
 
 $RMSD$: rooted mean squared error
 
